@@ -2464,6 +2464,7 @@ function AnimCube3(params) {
       y < top || y > top + (height + (buttonBar == 1 ? buttonHeight : 0)) / dpr)
       return;
     e.preventDefault();
+    activeId = parNode.id;
     mouseIsDown = true;
     showContextMenu = false;
     if (typeof e.touches != 'undefined')
@@ -2838,25 +2839,30 @@ function AnimCube3(params) {
 
   init0();
 
+  // code to rotate with arrows by Raquel Horta Bartomeu
+
   var pressedKeys = {};
-    document.addEventListener("keyup", (event)=> {
-        pressedKeys[event.key] = false;
-    });
-    document.addEventListener("keydown", (event)=>{
-        pressedKeys[event.key] = true;
-        let arrows = ['ArrowDown', "ArrowUp", "ArrowLeft", "ArrowRight"];
-        if(arrows.includes(event.key)){
-            let n = pressedKeys['ArrowDown'] ? 2 : pressedKeys['ArrowUp'] ? -2 : 0;
-            let i = pressedKeys['ArrowRight'] ? 2 : pressedKeys['ArrowLeft'] ? -2 : 0;
-            let o = 0, a = 0;
-            vNorm(vAdd(eye, vScale(vCopy(eyeD, eyeX), -.016 * i)));
-            vNorm(vMul(eyeX, eyeY, eye));
-            vNorm(vAdd(eye, vScale(vCopy(eyeD, eyeY), .016 * n)));
-            vNorm(vMul(eyeY, eye, eyeX));
-            lastX = o;
-            lastY = a;
-            currentAngle = .01 * (dragX * i + dragY * n) / Math.sqrt(dragX * dragX + dragY * dragY);
-            paint();
-        }
-    });
+  document.addEventListener("keyup", (event)=> {
+    pressedKeys[event.key] = false;
+  });
+  document.addEventListener("keydown", (event)=>{
+    if (parNode.id != activeId)
+      return;
+    pressedKeys[event.key] = true;
+    let arrows = ['ArrowDown', "ArrowUp", "ArrowLeft", "ArrowRight"];
+    if(arrows.includes(event.key)){
+      event.preventDefault(); // prevent page from scrolling
+      let n = pressedKeys['ArrowDown'] ? 2 : pressedKeys['ArrowUp'] ? -2 : 0;
+      let i = pressedKeys['ArrowRight'] ? 2 : pressedKeys['ArrowLeft'] ? -2 : 0;
+      let o = 0, a = 0;
+      vNorm(vAdd(eye, vScale(vCopy(eyeD, eyeX), -.016 * i)));
+      vNorm(vMul(eyeX, eyeY, eye));
+      vNorm(vAdd(eye, vScale(vCopy(eyeD, eyeY), .016 * n)));
+      vNorm(vMul(eyeY, eye, eyeX));
+      lastX = o;
+      lastY = a;
+      currentAngle = .01 * (dragX * i + dragY * n) / Math.sqrt(dragX * dragX + dragY * dragY);
+      paint();
+    }
+  });
 }
