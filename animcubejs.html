@@ -224,11 +224,11 @@ In order to do so, download one (or more) of the files below. Supercubes are inc
 <p><a href="sources/zip/2x2x2-AnimCubeJS.zip">2x2x2 AnimCubeJS simulator 
 <code>.zip</code> file</a> (12 kB)</p>
 <p><a href="sources/zip/3x3x3-AnimCubeJS.zip">3x3x3 AnimCubeJS simulator 
-<code>.zip</code> file</a> (12 kB)</p>
+<code>.zip</code> file</a> (13 kB)</p>
 <p><a href="sources/zip/4x4x4-AnimCubeJS.zip">4x4x4 AnimCubeJS simulator 
 <code>.zip</code> file</a> (13 kB)</p>
 <p><a href="sources/zip/5x5x5-AnimCubeJS.zip">5x5x5 AnimCubeJS simulator 
-<code>.zip</code> file</a> (14 kB)</p>
+<code>.zip</code> file</a> (13 kB)</p>
 <p><a href="sources/zip/6x6x6-AnimCubeJS.zip">6x6x6 AnimCubeJS simulator 
 <code>.zip</code> file</a> (14 kB)</p>
 <p><a href="sources/zip/7x7x7-AnimCubeJS.zip">7x7x7 AnimCubeJS simulator 
@@ -490,7 +490,7 @@ requestAnimationFrame.js
 <p>
 Developers can download the <a href="https://github.com/cubing/AnimCubeJS" target="_new">GitHub repository</a> 
 containing both minified and unminified JS files (minification was done using <a href="sources/codes/js-minification/minifier.html" target="_new">this tool</a>, 
-terser v5.27.1 to be specific) as well as the source code and documentation for both AnimCubeJS versions.
+terser v5.32.0 to be specific) as well as the source code and documentation for both AnimCubeJS versions.
 </p>
   
 <div id="controls" class="sections"><b><i>Controls</i></b></div>
@@ -1725,11 +1725,11 @@ direction (<code>Ra</code> is equal to <code>R L</code> or <code>L R</code>)</li
 	appear at the top of the simulator. The text 
 	to appear must be enclosed in the brace characters: '<code>{</code>' and '<code>}</code>'. To remove the currently displayed 
 comment, empty braces can be used: '<code>{}</code>'. 
-Text can be only on one line, however, you can divide long text passage into more smaller ones 
-and then display them sequentially within the animation. Much more text can be made to fit by increasing the simulator width 
-(see the examples in the <a href="#usage">Using Simulator in Web Pages</a> section)
-or reducing text size using the <code><a href="#textsize">textsize</a></code> parameter. Text can be specified in both 
-the <code><a href="#demo">demo</a></code> and <code>move</code> parameter.
+Text can be on multiple lines (<i>note:</i> in the original AnimCube Java applet the comment must have been only on a single line), 
+however, you can divide long text passage into more smaller ones 
+and then display them sequentially within the animation. Text can be specified in both 
+the <code><a href="#demo">demo</a></code> and <code>move</code> parameter, and its size is adjustable by 
+the <code><a href="#textsize">textsize</a></code> parameter.
 </p>
 
 <p>There can be more move sequences with different initial cube configurations specified in one simulator 
@@ -1752,14 +1752,15 @@ resulting in generating random move sequence (compare with the <code><a href="#s
 <p><i>Note:</i> To improve readability of your code, white-space characters can be used to surround the characters 
 from the move character set (with the exception 
 of modifiers - do not write e.g. <code>Ra2'</code> as <code>R a2'</code> or <code>Ra 2'</code> or <code>Ra2 '</code>). 
-For best readability of multiple move sequences in your code you can break a code line with a single backslash character:
+For better readability of multiple move sequences in your code you can break a code line with a single backslash character:
 
 </p><pre><code>    AnimCube3("move=\
-    sequence1;\
-    sequence2;\
-    sequence3;\
-    sequence4;\
-    sequence5")</code></pre>
+      sequence1;\
+      sequence2;\
+      sequence3;\
+      sequence4;\
+      sequence5"
+    )</code></pre>
 <p>
 
 <i>Examples:</i> <code>AnimCube3("move=R2' U M U' R2' U M' U'")</code> 
