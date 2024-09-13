@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+ <title>Animated GIF-like feature</title>
+ <meta name=viewport content="width=device-width, initial-scale=1">
+ <meta name="author" content="Michael Feather">
+ <link rel="icon" href="../../images/favicon.ico" type="image/x-icon">
+ <script src=../../../AnimCube3.js></script>
+ <style> 
+  body {margin-left: 10%; margin-right: 10%; font-family: Arial, Helvetica, sans-serif;}
+  p {margin:0; text-align: justify;}
+ </style>
+</head>
+<body>
+<center>
+<font size=+2>Animated GIF-like feature</font>
+<br><br>
+<p>The user can define a series of facelet definitions and a step rate. 
+Then the simulator will automatically cycle through each facelet definition 
+based on the user's determined step rate. Upon reaching the 
+end step, the simulator cycles back to step 1 and continues to repeat. 
+This could be useful for displaying the steps of a cube solving method 
+in a single simulator, cycling through interesting cube patterns, etc. 
+Modification of the AnimCubeJS program is not needed in this case.
+</p>
+<br>
+<table>
+ <tr>
+  <td><div id=c1 style=width:200px;height:200px></div></td>
+  <td width=40>
+  <td><div id=c2 style=width:200px;height:200px></div></td>
+ </tr>
+</table>
+<script>
+var acjs_removeListeners = [];
+var arr1 = [
+  'ddddydddddwdwwwdwdddddbbdddddddggdddddddoddodddddrrddd',
+  'ddddyddddwwwwwwwwwdbbdbbdbbdggdggdggdddoooooodrrdrrdrr',
+  'yyyyyyyyywwwwwwwwwdbbdbbdbbdggdggdggdddoooooodrrdrrdrr',
+  'yyyyyyyyywwwwwwwwwbbbbbbbbbgggggggggooooooooorrrrrrrrr'
+];
+var arr2 = [
+  'rlrlrlrlrrlrlrlrlrllllllllllllllllllllllllllllllllllll',
+  'rlrlrlrlrrlrlrlrlrylylylylyylylylylyblblblblbblblblblb',
+  'lrlrrrlrllrlrrrlrllylyyylyllylyyylyllblbbblbllblbbblbl',
+  'rrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyyyybbbbbbbbbbbbbbbbbb'
+];
+var rate = 2;
+AnimCube3('id=c1');
+AnimCube3('id=c2');
+demo('c1', arr1, 0);
+demo('c2', arr2, 0);
+function demo(id, arr, n) {
+  acjs_removeListeners[id]();
+  var params = 'id=' + id + '&facelets=' + arr[n++%arr.length] + '&buttonbar=0';
+  AnimCube3(params);
+  setTimeout(demo, rate*1000, id, arr, n);
+}
+</script>
+<br>
+<a href="javascript:window.close()">Close</a>
+<br><br>
+</center>
+</body>
+</html>
+
