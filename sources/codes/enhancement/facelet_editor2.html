@@ -13,6 +13,7 @@
  <script src=A7_facelet_editor2.js></script>
  <style>
   body {margin-left: 10%; margin-right: 10%; font-family: Arial, Helvetica, sans-serif;}
+  p {margin:0; text-align: justify;}
   td {text-align:center}
   .btn:active {background-color: #aaaaaa;}
   .btn {
@@ -37,7 +38,15 @@
 </head>
 <body>
 <center>
-<font size=+2>Facelet Editor 2</font><br>
+<font size=+2>Facelet Editor 2</font>
+<br><br>
+<p>
+Color the cube by clicking on facelets, use the dropdown list to select the
+color.
+To view the code for this mod, do ctrl-u for page source then click on
+the link for A3_facelet_editor2.js and search for faceletAreas, there is
+modified code in functions fixBlock, mousedown and init0.</p>
+<br>
 <select id=cubeType onchange="newCube('home')" class=pulldown>
  <option value=2>2x2</option>
  <option value=3 selected>3x3</option>

@@ -20,19 +20,22 @@ what modern physical cubes meant for speedcubing actually look like.
 The amount can be adjusted, enter a number in the box and press Enter 
 (must be &gt;= 1, can be decimal, less is more).
 The corners that are modded are configurable as can be seen on the second
-cube (see function drawFlorian in A3_florian.js for implementation details).
-</p>
+cube.
+To see the code for this mod, do ctrl-u for page source and view the
+javascript code (down the page).
+Also click on the link for A3_florian.js (near top of page) which is a
+modified version of AnimCube3.js and search for function drawFlorian.</p>
 <br>
 <table>
  <tr>
   <td align=center>
-   <input id=a1 onchange=ff(1) style=width:40px value=10></input>
+   <input id=a1 onchange=changeSize(1) style=width:40px value=10></input>
    <br><br>
    <div id=c1 style="width:200px; height:200px"></div>
   </td>
   <td width=30>
   <td align=center>
-   <input id=a2 onchange=ff(2) style=width:40px value=10></input>
+   <input id=a2 onchange=changeSize(2) style=width:40px value=10></input>
    <br><br>
    <div id=c2 style="width:200px; height:200px"></div>
   </td>
@@ -56,15 +59,12 @@ AnimCube3('id=c2&bgcolor=ffffff&supercube=1');
 for (var i=0; i < 36; i++)
   acjs_florianLayout['c2'][i] = alt_layout[i];
 acjs_paint['c2']();
-function ff(n) {
-console.log(n);
+function changeSize(n) {
   var cid = 'c' + n;
   var aid = 'a' + n;
   var s = document.getElementById(aid).value;
-  console.log(s);
   if (isNaN(s) || s < 1)
     return;
-  console.log(cid, s);
   acjs_put_var[cid]('florianSize', s,'n');
   acjs_paint[cid]();
 }
