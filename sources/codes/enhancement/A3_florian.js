@@ -1115,7 +1115,7 @@ function AnimCube3(params) {
     [[0, 3], [2, 3]],
     [[2, 3], [0, 3]]
   ];
-  // subcube dimmensions for middle layers
+  // subcube dimensions for middle layers
   var midBlockTable = [
     [[0, 0], [0, 0]],
     [[0, 3], [1, 2]],
@@ -1497,13 +1497,34 @@ function AnimCube3(params) {
       }
       if (curInfoText >= 0) {
         graphics.font = "bold " + textHeight + "px helvetica";
-        drawString(graphics, infoText[curInfoText], outlined ? dpr : 0, adjTextHeight());
+        wrapText(graphics, infoText[curInfoText], dpr, adjTextHeight(), width, textHeight);
+        // drawString(graphics, infoText[curInfoText], outlined ? dpr : 0, adjTextHeight());
       }
     }
     graphics.restore();
     if (drawButtons && buttonBar != 0) // omit unneccessary redrawing
       drawButtonsFunc(graphics);
   } // paint()
+
+  function wrapText(context, text, x, y, maxWidth, lineHeight) {
+    // source: https://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
+    var words = text.split(' ');
+    var line = '';
+    for(var n = 0; n < words.length; n++) {
+      var testLine = line + words[n] + ' ';
+      var metrics = context.measureText(testLine);
+      var testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        drawString(context, line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+      }
+      else {
+        line = testLine;
+      }
+    }
+    drawString(context, line, x, y);
+  }
 
   function adjTextHeight() {
     // size 14 font has enough padding for the top margin, smaller fonts
@@ -1582,19 +1603,24 @@ function AnimCube3(params) {
                   fillY[j] = Math.floor(fillY[j] - y);
                 }
                 if (superCube == true) {
+		  /* commenting out the code that draws the facelet background
                   fillPolygon(graphics, fillX, fillY, "#fdfdfd");
                   if (hintBorder)
                     drawPolygon(graphics, fillX, fillY, darker("#fdfdfd"));
                   else
                     drawPolygon(graphics, fillX, fillY, "#fdfdfd");
+                  */
                   drawSuperArrow(graphics, fillX, fillY, i, scube[i][p * 3 + q], colors[cube[i][p * 3 + q]]);
                 }
                 else {
+                  /*
                   fillPolygon(graphics, fillX, fillY, colors[cube[i][p * 3 + q]]);
                   if (hintBorder)
                     drawPolygon(graphics, fillX, fillY, darker(colors[cube[i][p * 3 + q]]));
                   else
                     drawPolygon(graphics, fillX, fillY, colors[cube[i][p * 3 + q]]);
+                  */
+                  drawFlorian(graphics, fillX, fillY, colors[cube[i][p * 3 + q]], p, q, 1);
                 }
               }
             }
@@ -1638,13 +1664,13 @@ function AnimCube3(params) {
               if (superCube == true) {
                 // drawPolygon(graphics, fillX, fillY, "#fdfdfd");
                 // fillPolygon(graphics, fillX, fillY, "#fdfdfd");
-                drawFlorian(graphics, fillX, fillY, "#fdfdfd", p, q);
+                drawFlorian(graphics, fillX, fillY, "#fdfdfd", p, q, 0);
                 drawSuperArrow(graphics, fillX, fillY, i, scube[i][p * 3 + q], colors[cube[i][p * 3 + q]]);
               }
               else {
                 // drawPolygon(graphics, fillX, fillY, colors[cube[i][p * 3 + q]]);
                 // fillPolygon(graphics, fillX, fillY, colors[cube[i][p * 3 + q]]);
-                drawFlorian(graphics, fillX, fillY, colors[cube[i][p * 3 + q]], p, q);
+                drawFlorian(graphics, fillX, fillY, colors[cube[i][p * 3 + q]], p, q, 0);
               }
             }
           }
@@ -1702,7 +1728,8 @@ function AnimCube3(params) {
     }
   } // fixblock
 
-  var florianSize = 10;
+  var florianSize = 0.25;
+  var curvePoints = 10;
 
   /* facelet layout for florian mod (see ACJS doc for face orientation)
 
@@ -1712,29 +1739,22 @@ function AnimCube3(params) {
        2 5 8
   */
   var florianLayout = [
-    //   0          1          2
-    [[0,0,1,0], [0,0,1,1], [0,0,0,1]],
-    [[0,1,1,0], [1,1,1,1], [1,0,0,1]],
-    [[0,1,0,0], [1,1,0,0], [1,0,0,0]],
+    [[0,0,1,0], [0,0,1,1], [0,0,0,1]], // 0 1 2
+    [[0,1,1,0], [1,1,1,1], [1,0,0,1]], // 3 4 5
+    [[0,1,0,0], [1,1,0,0], [1,0,0,0]], // 6 7 8
   ];
 
-  function drawFlorian(g, x, y, color, p, q) {
-    var n = florianSize;
-    var n1 = n + 1;
+  function drawFlorian(g, x, y, color, p, q, h) {
     g.beginPath();
     for (var i=0; i < 4; i++) {
       if (florianLayout[p][q][i]) {
-        var j = (i + 1) % 4;
-        var k = (i == 0) ? 3 : i-1;
-        var p1x = (n*x[i] + x[k]) / n1;
-        var p1y = (n*y[i] + y[k]) / n1;
-        var p2x = (n*x[i] + x[j]) / n1;
-        var p2y = (n*y[i] + y[j]) / n1;
-       if (i == 0)
-          g.moveTo(p1x, p1y);
+        var pts = getRoundedPath(x, y, i, florianSize);
+        if (i == 0)
+          g.moveTo(pts[0][0], pts[0][1]);
         else
-          g.lineTo(p1x, p1y);
-        g.lineTo(p2x, p2y);
+          g.lineTo(pts[0][0], pts[0][1]);
+        for (var j=1; j < pts.length; j++)
+          g.lineTo(pts[j][0], pts[j][1]);
       }
       else {
         if (i == 0)
@@ -1745,9 +1765,29 @@ function AnimCube3(params) {
     }
     g.closePath();
     g.fillStyle = color;
-    g.strokeStyle = color;
+    if (h && hintBorder)
+      g.strokeStyle = darker(color);
+    else
+      g.strokeStyle = color;
     g.fill();
     g.stroke();
+  }
+
+  function getRoundedPath(x, y, i, roundness) {
+    const prev = [3, 0, 1, 2], next = [1, 2, 3, 0];
+    let newPoints = [];
+    let xp = x[i] + (x[prev[i]] - x[i]) * roundness;
+    let yp = y[i] + (y[prev[i]] - y[i]) * roundness;
+    let xn = x[i] + (x[next[i]] - x[i]) * roundness;
+    let yn = y[i] + (y[next[i]] - y[i]) * roundness;
+    for (let j=0; j <= curvePoints; j++) {
+      let t = j / curvePoints;
+      newPoints.push([
+        xp*(1-t)**2 + x[i]*2*t*(1-t) + xn*t**2,
+        yp*(1-t)**2 + y[i]*2*t*(1-t) + yn*t**2,
+      ]);
+    }
+    return newPoints;
   }
 
   function getCorners(face, corner, cornersX, cornersY, factor1, factor2, mirror) {
@@ -2377,8 +2417,11 @@ function AnimCube3(params) {
             natural = true;
             twistLayers(cube, layer, num, mode);
             spinning = false;
-            if (moveAnimated)
+            if (moveAnimated) {
+              if (!moveOne && moveDir > 0) movePos++;
               paint();
+              if (!moveOne && moveDir > 0) movePos--;
+            }
             if (moveOne)
               restart = true;
           }

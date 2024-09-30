@@ -2522,8 +2522,11 @@ function AnimCube5(params) {
             natural = true;
             twistLayers(cube, layer, num, mode);
             spinning = false;
-            if (moveAnimated)
+            if (moveAnimated) {
+              if (!moveOne && moveDir > 0) movePos++;
               paint();
+              if (!moveOne && moveDir > 0) movePos--;
+            }
             if (moveOne)
               restart = true;
           }
