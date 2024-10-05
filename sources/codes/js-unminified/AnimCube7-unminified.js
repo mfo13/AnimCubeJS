@@ -1763,8 +1763,8 @@ function AnimCube7(params) {
       }
       if (curInfoText >= 0) {
         graphics.font = "bold " + textHeight + "px helvetica";
-        var w = graphics.measureText(infoText[curInfoText]).width;
-        wrapText(graphics, infoText[curInfoText], dpr, adjTextHeight(), width, textHeight);
+        var w = (move.length > 1) ? x - 5*dpr : width;
+        wrapText(graphics, infoText[curInfoText], dpr, adjTextHeight(), w, textHeight);
         // drawString(graphics, infoText[curInfoText], (width-w)/2+dpr, adjTextHeight());
         // drawString(graphics, infoText[curInfoText], outlined ? dpr : 0, adjTextHeight());
       }
