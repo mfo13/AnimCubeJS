@@ -1,0 +1,92 @@
+<!doctype html>
+<head>
+ <title>Show Hidden Facelets (back view)</title>
+ <meta name=viewport content="width=device-width, initial-scale=1">
+ <meta name="author" content="Michael Feather">
+ <link rel="icon" href="../../images/favicon.ico" type="image/x-icon">
+ <script src=A3_backview.js></script>
+ <style>
+  body {margin-left:10%; margin-right:10%; font-family: Arial, Helvetica, sans-serif;}
+  p {margin:0; text-align:justify}
+  ol {padding-left:18px; list-style-position:outside}
+ </style>
+</head>
+<body>
+<center>
+<font size=+2> Show Hidden Facelets<br>(back view)</font>
+<br><br>
+<p>This page uses a modified version of AnimCube to show the hidden facelets
+with a back view.</p>
+<table border=0 cellspacing=0 cellpadding=0>
+ <tr height=8>
+ <tr id=ca1>
+  <td><div id=c1 style="width:180px; height:180px;"></div></td>
+  <td><div id=c2 style="width:180px; height:180px;"></div></td>
+ <tr>
+</table>
+</center>
+<br>
+The following shows the AnimCube mods for use with a web page having two
+cubes with ids c1 and c2 in a combined cube area with id ca1 as shown above.
+<br>
+<ol>
+<li>In function init, set initial position for second cube:
+<pre>
+if (parNode.id == 'c2')
+  initialPosition = 'rrdddddddddd';
+</pre></li>
+<li>In function paint, disable display of the progress/buttonbar for
+second cube. Add the following prior to code that displays the progressbar:
+<pre>
+if (parNode.id == 'c2')
+  return;
+</pre></li>
+<li>In function mousedown:
+<ol type=A>
+<li>Use combined cube area for rotation by changing the declaration of
+rect as shown:
+<pre>
+var rect = document.getElementById('ca1').getBoundingClientRect();
+</pre></li>
+<li>Change width to width*2 in this line:
+<pre>
+if (x < left || x > left + width / dpr ||
+</pre></li>
+<li>
+Add the following after line: "mouseIsDown = true;":
+<pre>
+mousedownId = e.target.parentNode.id;
+if (mousedownId != 'c1' && mousedownId != 'c2')
+  mousedownId = 'c1';
+</pre>
+note: also declare global variable mousedownId
+</li>
+<br>
+<li>Prevent progressbar from working beyond the display area by adding the
+following before line: "if (clickProgress)":
+<pre>
+if (lastX &gt; width)
+  return;
+</pre></li>
+</ol>
+<li>In function mousemove, reverse direction of cube rotation for Y movements
+for second cube:
+<pre>
+var dir = (parNode.id == mousedownId) ? 1 : -1;
+vNorm(vAdd(eye, vScale(vCopy(eyeD, eyeY), dy * 0.016 * dir)));
+</pre></li>
+</ol>
+<br>
+<script>
+var p = "&move=R U' R'&initrevmove=#&colorscheme=WYGBOR&bgcolor=ffffff&edit=0";
+p += '&movetext=1&fonttype=0&slidercolor=555555&buttonheight=16';
+AnimCube3('id=c1' + p);
+AnimCube3('id=c2' + p);
+</script>
+<center>
+<a href="javascript:window.close()">Close</a>
+<br><br><br>
+</center>
+</body>
+</html>
+

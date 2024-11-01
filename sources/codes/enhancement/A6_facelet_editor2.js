@@ -1689,36 +1689,13 @@ function AnimCube6(params) {
       }
       if (curInfoText >= 0) {
         graphics.font = "bold " + textHeight + "px helvetica";
-        var w = (move.length > 1) ? x - 5*dpr : width;
-        wrapText(graphics, infoText[curInfoText], dpr, adjTextHeight(), w, textHeight);
-        // drawString(graphics, infoText[curInfoText], (width-w)/2+dpr, adjTextHeight());
-        // drawString(graphics, infoText[curInfoText], outlined ? dpr : 0, adjTextHeight());
+        drawString(graphics, infoText[curInfoText], outlined ? dpr : 0, adjTextHeight());
       }
     }
     graphics.restore();
     if (drawButtons && buttonBar != 0) // omit unneccessary redrawing
       drawButtonsFunc(graphics);
   } // paint()
-
-  function wrapText(context, text, x, y, maxWidth, lineHeight) {
-    // source: https://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
-    var words = text.split(' ');
-    var line = '';
-    for(var n = 0; n < words.length; n++) {
-      var testLine = line + words[n] + ' ';
-      var metrics = context.measureText(testLine);
-      var testWidth = metrics.width;
-      if (testWidth > maxWidth && n > 0) {
-        drawString(context, line, x, y);
-        line = words[n] + ' ';
-        y += lineHeight;
-      }
-      else {
-        line = testLine;
-      }
-    }
-    drawString(context, line, x, y);
-  }
 
   function adjTextHeight() {
     // size 14 font has enough padding for the top margin, smaller fonts
@@ -1744,6 +1721,8 @@ function AnimCube6(params) {
   var border = [[0.10, 0.10], [0.90, 0.10], [0.90, 0.90], [0.10, 0.90]];
   var factors = [[0, 0], [0, 1], [1, 1], [1, 0]];
   var tempNormal = [];
+  var faceletAreas = [];
+  var faceletAreasIndex;
 
   function fixBlock(eye, eyeX, eyeY, blocks, mode, drawLayer, drawHint) {
     // project 3D co-ordinates into 2D screen ones
@@ -1843,6 +1822,7 @@ function AnimCube6(params) {
       }
     }
     // draw all visible faces and get dragging regions
+    faceletAreasIndex = 0;
     for (var i = 0; i < 6; i++) { // all faces
       vSub(vScale(vCopy(perspEye, eye), 5.0 + persp), faceNormals[i]); // perspective correction
       if (vProd(perspEye, faceNormals[i]) > -(1-scale)) { // draw only faces towards us
@@ -1854,6 +1834,12 @@ function AnimCube6(params) {
             for (var o = 0, q = blocks[i][0][0]; o < sideW; o++, q++) {
               for (var j = 0; j < 4; j++)
                 getCorners(i, j, fillX, fillY, q + border[j][0], p + border[j][1], mirrored);
+              for (var k=0; k < 4; k++) {
+                faceletAreas[faceletAreasIndex][0][k] = fillX[k];
+                faceletAreas[faceletAreasIndex][1][k] = fillY[k];
+              }
+              faceletAreas[faceletAreasIndex][2] = i;
+              faceletAreas[faceletAreasIndex++][3] = p * cubeDim + q;
               if (superCube == true) {
                 drawPolygon(graphics, fillX, fillY, "#fdfdfd");
                 fillPolygon(graphics, fillX, fillY, "#fdfdfd");
@@ -2563,11 +2549,8 @@ function AnimCube6(params) {
             natural = true;
             twistLayers(cube, layer, num, mode);
             spinning = false;
-            if (moveAnimated) {
-              if (!moveOne && moveDir > 0) movePos++;
+            if (moveAnimated)
               paint();
-              if (!moveOne && moveDir > 0) movePos--;
-            }
             if (moveOne)
               restart = true;
           }
@@ -2687,6 +2670,8 @@ function AnimCube6(params) {
     }
   }
 
+  var faceletColors = ['W','Y','O','R','G','B','L'];
+
   function mousedown(e) {
     var rect = canvas.getBoundingClientRect();
     var left = Math.floor(rect.left);
@@ -2711,6 +2696,40 @@ function AnimCube6(params) {
     lastDragX = lastX = getX(e);
     lastDragY = lastY = getY(e);
     toTwist = false;
+    var cx = (x - left) * dpr;
+    var cy = (y - top) * dpr;
+    for (var i=0, mod=0; i < faceletAreasIndex; i++) {
+      var fa = faceletAreas[i];
+      var fc = selectedColor.value;
+      if (pnpoly(fa[0], fa[1], cx, cy)) {
+        if (superCube && cube[fa[2]][fa[3]] == fc) {
+          scube[fa[2]][fa[3]] = (scube[fa[2]][fa[3]]+1) % 4;
+          for (var i=0, s=''; i < 6; i++)
+            for (var j=0; j < cubeDim*cubeDim; j++)
+              s += scube[i][j];
+          document.getElementById('sfacelets').value = s;
+        }
+        else {
+          cube[fa[2]][fa[3]] = selectedColor.value;
+          for (var i=0, s=''; i < 6; i++)
+            for (var j=0; j < cubeDim*cubeDim; j++)
+              s += faceletColors[cube[i][j]-10];
+          document.getElementById('facelets').value = s;
+        }
+        paint();
+        break;
+      }
+    }
+    function pnpoly(vx, vy, tx, ty) {
+      // source for "point in polygon" function:
+      // https://wrfranklin.org/Research/Short_Notes/pnpoly.html
+      for (var i=0, j=3, c=0; i < 4; j=i++) {
+        if (((vy[i] > ty) != (vy[j] > ty)) &&
+            (tx < (vx[j]-vx[i]) * (ty-vy[i]) / (vy[j]-vy[i]) + vx[i]))
+         c = !c;
+      }
+      return c;
+    }
     buttonPressed = selectButton(lastX, lastY);
     if (buttonPressed >= 0)
       button();
@@ -3037,6 +3056,8 @@ function AnimCube6(params) {
     }
     curMove = 0;
     originalAngle = 0;
+    for (var i=0; i < cubeDim*cubeDim*3; i++)
+      faceletAreas[i] = [[],[]];
     onModuleLoad();
     if (parNode.id != null)
       init_direct_access(parNode.id);

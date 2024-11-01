@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+ <title>Facelet Editor 2</title>
+ <meta name=viewport content="width=device-width, initial-scale=1">
+ <meta name="author" content="Michael Feather">
+ <link rel="icon" href="../../images/favicon.ico" type="image/x-icon">
+ <script src=A2_facelet_editor2.js></script>
+ <script src=A3_facelet_editor2.js></script>
+ <script src=A4_facelet_editor2.js></script>
+ <script src=A5_facelet_editor2.js></script>
+ <script src=A6_facelet_editor2.js></script>
+ <script src=A7_facelet_editor2.js></script>
+ <style>
+  body {margin-left: 10%; margin-right: 10%; font-family: Arial, Helvetica, sans-serif;}
+  p {margin:0; text-align: justify;}
+  td {text-align:center}
+  .btn:active {background-color: #aaaaaa;}
+  .btn {
+    width:80px;
+    height:30px;
+    padding:0;
+    border:1px solid black;
+    border-radius:15px;
+    background-color:white;
+    outline:none;
+  } 
+  .pulldown {
+    height:32px;
+    border-radius:12px;
+    padding:0 10px 0;
+    border:1px solid black;
+    background-color:white;
+    margin-top:15px;
+    outline:none;
+  }
+ </style>
+</head>
+<body>
+<center>
+<font size=+2>Facelet Editor 2</font>
+<br><br>
+<p>
+Color the cube by clicking on facelets, use the dropdown list to select the
+color.
+To view the code for this mod, do ctrl-u for page source then click on
+the link for A3_facelet_editor2.js and search for faceletAreas, there is
+modified code in functions fixBlock, mousedown and init0.</p>
+<br>
+<select id=cubeType onchange="newCube('home')" class=pulldown>
+ <option value=2>2x2</option>
+ <option value=3 selected>3x3</option>
+ <option value=4>4x4</option>
+ <option value=5>5x5</option>
+ <option value=6>6x6</option>
+ <option value=7>7x7</option>
+</select>
+&nbsp;
+<select id=selectedColor class=pulldown>
+ <option value=10>White</option>
+ <option value=11>Yellow</option>
+ <option value=12>Orange</option>
+ <option value=13>Red</option>
+ <option value=14>Green</option>
+ <option value=15>Blue</option>
+</select>
+<br>
+Supercube:
+<input id=supercube type=checkbox onchange="newCube('home')"
+  style="margin-top:12px;vertical-align:bottom">
+<div id=cube style="width:300px; height:300px"></div>
+<table border=0>
+ <tr>
+  <td><button class=btn onclick="newCube('home')">Home</button></td>
+  <td width=10>
+  <td><button class=btn onclick="newCube('clear')">Clear</button></td>
+ </tr>
+ <tr height=10></tr>
+</table>
+<input id=facelets style=width:600px readonly>
+<input id=sfacelets style=width:600px readonly>
+<br><br>
+<a href="javascript:window.close()">Close</a>
+<br><br><br>
+<script>
+"use strict";
+var params = '&buttonbar=0&bgcolor=ffffff&edit=0';
+var div = document.getElementById('cube');
+var colors = ['R','O','Y','W','G','B'];
+var acjs_removeListeners = [];
+AnimCube3('id=cube'); // initialize acjs_removeListeners
+newCube('home');
+function newCube(cmd) {
+  var size;
+  var type = document.getElementById('cubeType').value; 
+  size = type;
+  var par = 'id=cube' + params;
+  var supercube = document.getElementById('supercube').checked; 
+  if (supercube) {
+    par += '&supercube=1';
+    document.getElementById('sfacelets').style.display = 'inline';
+    document.getElementById('sfacelets').value = fill2(type, '0');
+  }
+  else {
+    document.getElementById('sfacelets').style.display = 'none';
+  }
+  if (cmd == 'home') {
+    document.getElementById('facelets').value = fill(type);
+    par += '&colorscheme=ROYWGB';
+  }
+  if (cmd == 'clear') {
+    document.getElementById('facelets').value = fill2(type, 'L');
+    par += '&colorscheme=LLLLLL';
+  }
+  acjs_removeListeners['cube']();
+  if      (size == 2) AnimCube2(par); 
+  else if (size == 3) AnimCube3(par); 
+  else if (size == 4) AnimCube4(par); 
+  else if (size == 5) AnimCube5(par); 
+  else if (size == 6) AnimCube6(par); 
+  else if (size == 7) AnimCube7(par); 
+}
+function fill(n) {
+  for (var i=0, s=''; i < 6; i++)
+    for (var j=0; j < n*n; j++)
+      s += colors[i];
+  return s;
+}
+function fill2(n, c) {
+  for (var i=0, s=''; i < n*n*6; i++)
+    s += c;
+  return s;
+}
+</script>
+</center>
+</body>
+</html>
+

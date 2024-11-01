@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+ <title>Florian Mod</title>
+ <meta name=viewport content="width=device-width, initial-scale=1">
+ <meta name="author" content="Michael Feather">
+ <link rel="icon" href="../../images/favicon.ico" type="image/x-icon">
+ <script src=A3_florian.js></script>
+ <style> 
+  body {margin-left: 10%; margin-right: 10%; font-family: Arial, Helvetica, sans-serif;}
+  p {margin:0; text-align: justify;}
+ </style>
+</head>
+<body>
+<center>
+<font size=+2>Florian Mod</font>
+<br><br>
+<p>In this demo the inner corners have been rounded (idea to use 
+Bézier curve and initial code contribution by Isaac Vega Rodríguez) to resemble 
+what modern physical cubes meant for speedcubing actually look like. 
+The amount can be adjusted, enter a number between 0 and 0.50 in the box
+and press Enter.
+The corners that are rounded are configurable as can be seen on the second
+cube.
+The third cube has all corners rounded.
+The corners can be straight cut instead of rounded by clicking the checkbox.
+To see the code for this mod, do ctrl-u for page source and view the
+javascript code (down the page).
+Also click on the link for A3_florian.js (near top of page) which is a
+modified version of AnimCube3.js and search for function drawFlorian.</p>
+<br>
+<table>
+ <tr>
+  <td align=center>
+   <input id=a1 onchange=changeSize(1) style=width:40px>
+   <input id=b1 onchange=changeType(1) type=checkbox>
+   <br><br>
+   <div id=c1 style="width:180px; height:180px"></div>
+  </td>
+  <td width=30>
+  <td align=center>
+   <input id=a2 onchange=changeSize(2) style=width:40px>
+   <input id=b2 onchange=changeType(2) type=checkbox>
+   <br><br>
+   <div id=c2 style="width:180px; height:180px"></div>
+  </td>
+  <td width=30>
+  <td align=center>
+   <input id=a3 onchange=changeSize(3) style=width:40px>
+   <input id=b3 onchange=changeType(3) type=checkbox>
+   <br><br>
+   <div id=c3 style="width:180px; height:180px"></div>
+  </td>
+ </tr>
+ <tr height=20>
+ <tr>
+  <td align=center>
+   <input id=a4 onchange=changeSize(4) style=width:40px>
+   <input id=b4 onchange=changeType(4) type=checkbox>
+   <br><br>
+   <div id=c4 style="width:180px; height:180px"></div>
+  </td>
+  <td width=30>
+  <td align=center>
+   <input id=a5 onchange=changeSize(5) style=width:40px>
+   <input id=b5 onchange=changeType(5) type=checkbox>
+   <br><br>
+   <div id=c5 style="width:180px; height:180px"></div>
+  </td>
+  <td width=30>
+  <td align=center>
+   <input id=a6 onchange=changeSize(6) style=width:40px>
+   <input id=b6 onchange=changeType(6) type=checkbox>
+   <br><br>
+   <div id=c6 style="width:180px; height:180px"></div>
+  </td>
+ </tr>
+</table>
+<br>
+<a href="javascript:window.close()">Close</a>
+<br><br>
+<script>
+var alt_layout = [
+  [[0,0,0,0], [0,0,1,1], [0,0,0,0]],
+  [[0,1,1,0], [1,1,1,1], [1,0,0,1]],
+  [[0,0,0,0], [1,1,0,0], [0,0,0,0]]
+];
+var alt_layout2 = [
+  [[1,1,1,1], [1,1,1,1], [1,1,1,1]],
+  [[1,1,1,1], [1,1,1,1], [1,1,1,1]],
+  [[1,1,1,1], [1,1,1,1], [1,1,1,1]]
+];
+var acjs_florianLayout = [];
+var acjs_florianSize = [];
+var acjs_paint = [];
+var acjs_put_var = [];
+init();
+function init() {
+  AnimCube3('id=c1&bgcolor=ffffff&borderwidth=6');
+  AnimCube3('id=c2&bgcolor=ffffff&borderwidth=6');
+  AnimCube3('id=c3&bgcolor=ffffff&borderwidth=6');
+  AnimCube3('id=c4&bgcolor=ffffff&borderwidth=6&hint=8&scale=5&hintborder=1');
+  AnimCube3('id=c5&bgcolor=ffffff&borderwidth=6&hint=8&scale=5&hintborder=1');
+  AnimCube3('id=c6&bgcolor=ffffff&borderwidth=6&hint=8&scale=5&hintborder=1');
+  /* these are for testing supercube
+  AnimCube3('id=c1&supercube=1&bgcolor=ffffff');
+  AnimCube3('id=c2&supercube=1&bgcolor=ffffff');
+  AnimCube3('id=c3&supercube=1&bgcolor=ffffff');
+  AnimCube3('id=c4&supercube=1&bgcolor=ffffff&hint=8&scale=5&hintborder=1');
+  AnimCube3('id=c5&supercube=1&bgcolor=ffffff&hint=8&scale=5&hintborder=1');
+  AnimCube3('id=c6&supercube=1&bgcolor=ffffff&hint=8&scale=5&hintborder=1');
+  */
+  for (var i=0; i < 3; i++) {
+    acjs_florianLayout['c2'][i] = alt_layout[i];
+    acjs_florianLayout['c3'][i] = alt_layout2[i];
+    acjs_florianLayout['c5'][i] = alt_layout[i];
+    acjs_florianLayout['c6'][i] = alt_layout2[i];
+  }
+  acjs_paint['c2']();
+  acjs_paint['c3']();
+  acjs_paint['c5']();
+  acjs_paint['c6']();
+  for (var i=1; i <= 6; i++) {
+    document.getElementById('a'+i).value = 0.25;
+    document.getElementById('b'+i).checked = false;
+  }
+}
+function changeSize(n) {
+  var cid = 'c' + n;
+  var s = document.getElementById('a'+n).value;
+  if (isNaN(s) || s < 0 || s > 0.5)
+    return;
+  acjs_put_var[cid]('florianSize', s,'n');
+  acjs_paint[cid]();
+}
+function changeType(n) {
+  var cid = 'c' + n;
+  var checked = document.getElementById('b'+n).checked;
+  if (checked)
+    acjs_put_var[cid]('curvePoints', 1, 'n');
+  else
+    acjs_put_var[cid]('curvePoints', 10, 'n');
+  acjs_paint[cid]();
+}
+</script>
+</center>
+</body>
+</html>

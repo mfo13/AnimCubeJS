@@ -1429,13 +1429,36 @@ function AnimCube2(params) {
       }
       if (curInfoText >= 0) {
         graphics.font = "bold " + textHeight + "px helvetica";
-        drawString(graphics, infoText[curInfoText], outlined ? dpr : 0, adjTextHeight());
+        var w = (move.length > 1) ? x - 5*dpr : width;
+        wrapText(graphics, infoText[curInfoText], dpr, adjTextHeight(), w, textHeight);
+        // drawString(graphics, infoText[curInfoText], (width-w)/2+dpr, adjTextHeight());
+        // drawString(graphics, infoText[curInfoText], outlined ? dpr : 0, adjTextHeight());
       }
     }
     graphics.restore();
     if (drawButtons && buttonBar != 0) // omit unneccessary redrawing
       drawButtonsFunc(graphics);
   } // paint()
+
+  function wrapText(context, text, x, y, maxWidth, lineHeight) {
+    // source: https://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
+    var words = text.split(' ');
+    var line = '';
+    for(var n = 0; n < words.length; n++) {
+      var testLine = line + words[n] + ' ';
+      var metrics = context.measureText(testLine);
+      var testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        drawString(context, line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+      }
+      else {
+        line = testLine;
+      }
+    }
+    drawString(context, line, x, y);
+  }
 
   function adjTextHeight() {
     // size 14 font has enough padding for the top margin, smaller fonts
@@ -2245,8 +2268,11 @@ function AnimCube2(params) {
             natural = true;
             twistLayers(cube, layer, num, mode);
             spinning = false;
-            if (moveAnimated)
+            if (moveAnimated) {
+              if (!moveOne && moveDir > 0) movePos++;
               paint();
+              if (!moveOne && moveDir > 0) movePos--;
+            }
             if (moveOne)
               restart = true;
           }

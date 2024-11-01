@@ -15,15 +15,31 @@
 <center>
 <font size=+2>Rotate with Arrows</font>
 <br><br>
-Use arrow keys to rotate the cube.
-<br><br>
-The code for this modification was contributed by 
-Raquel Horta Bartomeu and can be seen at the bottom of the 
-program which has been renamed A3_rotate_arrows.js.
-<br><br><br>
-<div style="width:200px; height:200px">
- <script>AnimCube3('')</script>
-</div>
+<p>Click on a cube and then rotate with arrow keys.
+The code for this modification was contributed by Raquel Horta Bartomeu
+and can be seen at the bottom of the AnimCube program which has been
+renamed A3_rotate_arrows.js.
+To view, do ctrl-u for page source then click on the link for
+A3_rotate_arrows.js and do ctrl-end.</p>
+<br>
+<table>
+ <tr>
+  <td><div id=c1 style="width:200px; height:200px"></div></td>
+  <td width=30>
+  <td><div id=c2 style="width:200px; height:200px"></div></td>
+ </tr>
+</table>
+<script>
+var activeId;
+document.addEventListener('mousedown', mousedown);
+AnimCube3('id=c1&colorscheme=ROYWGB&initmove=U2M2U2M2 R2S2R2S2 F2E2F2E2');
+AnimCube3('id=c2&colorscheme=ROYWGB&initmove=R2E2R2E2 B2M2B2M2 U2S2U2S2');
+function mousedown() {
+  // animcube will set activeId, this will deactivate if clicked
+  // outside cube areas
+  activeId = null;
+}
+</script>
 <br>
 <a href="javascript:window.close()">Close</a>
 <br><br>
